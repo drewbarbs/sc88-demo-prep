@@ -38,9 +38,11 @@ def main(fbytes):
                 out_bytes += track_match.group(0)
                 continue # type 1 midi file: first chunk has no note data
             if b'PartB' in tname:
+                # append the MTrk prefix
                 out_bytes += track_chunk[:4]
                 # add the 4 track-length bytes, adjusted for added port-num meta event
-                out_bytes += struct.pack('>I', track_numbytes + 4)
+                out_bytes += struct.pack('>I', track_numbytes + 5)
+                # add Port Number midi event, with 00 time delta
                 # all midi events in this track will apply to port 1
                 out_bytes += b'\x00\xff\x21\x01\x01'
                 # append the rest of the track bytes
